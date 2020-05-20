@@ -51,8 +51,7 @@ namespace TestPerformanceTester
             foreach (TestResult result in results)
             {
                 Console.WriteLine("{0} ({1}ms)", result.Description, result.Milliseconds);
-                int length = (int)(result.Percent / 100.0 * MaxBarLength);
-                Console.WriteLine($"[{new string('*', length),-MaxBarLength}]");
+                Console.WriteLine("[{0}]", result.GetRelativePerformanceBar(60));
                 Console.WriteLine();
             }
         }

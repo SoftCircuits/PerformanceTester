@@ -13,16 +13,19 @@ namespace SoftCircuits.PerformanceTester
     public class PerformanceTester
     {
         /// <summary>
-        /// 
+        /// Runs all the tests in the specified assembly. Tests are implemented
+        /// as classes that implement the <see cref="IPerformanceTest"/>
+        /// interface.
         /// </summary>
-        /// <param name="assembly"></param>
+        /// <param name="assembly">The assembly from which to find and run the
+        /// tests.</param>
         public IEnumerable<TestResult> Run(Assembly assembly)
         {
             if (assembly == null)
                 throw new ArgumentNullException(nameof(assembly));
 
-            List<TestResult> results = new List<TestResult>();
             Stopwatch stopwatch = new Stopwatch();
+            List<TestResult> results = new List<TestResult>();
 
             foreach (Type type in GetAssemblyTests(assembly))
             {
@@ -43,7 +46,7 @@ namespace SoftCircuits.PerformanceTester
             // Calculate percents
             long max = results.Select(r => r.Milliseconds).DefaultIfEmpty(0).Max();
             foreach (TestResult result in results)
-                result.Percent = (int)((double)result.Milliseconds / max * 100);
+                result.Percent = Math.Min((int)((double)result.Milliseconds / max * 100), 100);
 
             return results;
         }
@@ -56,10 +59,9 @@ namespace SoftCircuits.PerformanceTester
         /// <returns>The list of found types.</returns>
         private IEnumerable<Type> GetAssemblyTests(Assembly assembly)
         {
-            Type interfaceType = typeof(IPerformanceTest);
             return assembly
                 .GetTypes()
-                .Where(type => type.GetInterfaces().Contains(interfaceType));
+                .Where(type => type.GetInterfaces().Contains(typeof(IPerformanceTest)));
         }
     }
 }

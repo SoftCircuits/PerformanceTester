@@ -12,7 +12,7 @@ PerformanceTester is a simple library to help compare the performance of differe
 
 ## Using the Library
 
-To use the library, create each candidate test as a class that implements the `IPerformanceTest1`. This interface has three members:
+To use the library, create each candidate test as a class that implements the `IPerformanceTest` interface. This interface has three members:
 
 ```cs
 public string Description { get; }

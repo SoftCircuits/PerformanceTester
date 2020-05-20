@@ -34,9 +34,9 @@ The method that performs the actual test. This is the method that will be timed.
 
 ## Example
 
-As an example, three simple tests are defined below. These tests simply call `Thread.Sleep()` to pause varying amounts of time.
+For example, the following code defines three simple tests. These tests simply call `Thread.Sleep()` to pause for varying amounts of time.
 
-```
+```cs
 class Test1 : IPerformanceTest
 {
     public string Description => "Quarter second test";

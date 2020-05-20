@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Jonathan Wood</Authors>
+    <Company>SoftCircuits</Company>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
+    <PackageIcon>Logo_64x64.png</PackageIcon>
+    <Product>PerformanceTester</Product>
+    <Copyright>Copyright © 2020 SoftCircuits</Copyright>
+    <Description>Simple class to help compare different algorithms. Create your tests by writing classes that implement IPerformanceTest. The library will run all such tests in the specified assembly and provide the results, which include the time in milliseconds and as the percent of the time taken by the slowest test. Saves time when comparing the performance of different code blocks.</Description>
+    <PackageTags>profile profiling</PackageTags>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageReleaseNotes>Initial version.</PackageReleaseNotes>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/SoftCircuits/PerformanceTest</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/SoftCircuits/PerformanceTest</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\License.txt">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\Logo_64x64.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

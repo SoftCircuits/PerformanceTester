@@ -30,7 +30,7 @@ A method that is called before the test to perform any initialization. This init
 public void Run();
 ```
 
-Method that performs the actual test.
+The method that performs the actual test. This is the method that will be timed.
 
 ## Example
 

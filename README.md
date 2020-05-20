@@ -24,7 +24,7 @@ A read-only property that describes this test.
 public void Initialize();
 ```
 
-A method that is called before the test to perform any initialization. This initialization is run before the timer starts.
+A method that is called before the test to perform any initialization. This time taken by this method is not included in the timing of this test.
 
 ```cs
 public void Run();
@@ -66,14 +66,15 @@ PerformanceTester tester = new PerformanceTester();
 IEnumerable<TestResult> results = tester.Run(Assembly.GetExecutingAssembly());
 ```
 
-The following code could be used to show relative performance bars in a console application.
+The `TestResult` class provides the description of the test, the number of milliseconds taken by that test, and also the percent of time taken relative to the slowest test.
+
+The `TestResult` class also provides the `GetRelativePerformanceBar()` method. This method will create a character *bar* that represents the result's relative time.
 
 ```cs
 foreach (TestResult result in results)
 {
     Console.WriteLine("{0} ({1}ms)", result.Description, result.Milliseconds);
-    int length = (int)(result.Percent / 100.0 * MaxBarLength);
-    Console.WriteLine($"[{new string('*', length),-MaxBarLength}]");
+    Console.WriteLine($"[{result.GetRelativePerformanceBar(60)}]");
     Console.WriteLine();
 }
 ```

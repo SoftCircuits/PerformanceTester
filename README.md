@@ -59,7 +59,7 @@ class Test3 : IPerformanceTest
 }
 ```
 
-To test the performance of these three tests, create an instance of the `PerformanceTester` class and call the `Run()` method. The `Run()` method accepts an `Assembly` argument. It will run all the tests in the given assembly.
+To test the performance of these three tests, create an instance of the `PerformanceTester` class and call the `Run()` method. The `Run()` method accepts an `Assembly` argument and will run all the tests in the given assembly.
 
 ```cs
 PerformanceTester tester = new PerformanceTester();

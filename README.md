@@ -24,7 +24,7 @@ A read-only property that describes this test.
 public void Initialize();
 ```
 
-A method that is called before the test to perform any initialization. This time taken by this method is not included in the timing of this test.
+A method that is called before the test to perform any initialization. The time taken by this method is not included in the timing of this test.
 
 ```cs
 public void Run();

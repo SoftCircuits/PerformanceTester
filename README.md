@@ -68,7 +68,7 @@ IEnumerable<TestResult> results = tester.Run(Assembly.GetExecutingAssembly());
 
 The `TestResult` class provides the description of the test, the number of milliseconds taken by that test, and also the percent of time taken relative to the slowest test.
 
-The `TestResult` class also provides the `GetRelativePerformanceBar()` method. This method will create a character *bar* that represents the result's relative time.
+The `TestResult` class also provides the `GetRelativePerformanceBar()` method. This method will create a character *bar* that represents the result's relative time. This is demonstrated in the following snippet.
 
 ```cs
 foreach (TestResult result in results)

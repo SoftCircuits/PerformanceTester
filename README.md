@@ -74,7 +74,7 @@ The `TestResult` class also provides the `GetRelativePerformanceBar()` method. T
 foreach (TestResult result in results)
 {
     Console.WriteLine("{0} ({1}ms)", result.Description, result.Milliseconds);
-    Console.WriteLine($"[{result.GetRelativePerformanceBar(60)}]");
+    Console.WriteLine("[{0}]", result.GetRelativePerformanceBar(60));
     Console.WriteLine();
 }
 ```

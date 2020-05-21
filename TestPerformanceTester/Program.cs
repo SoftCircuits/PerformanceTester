@@ -13,28 +13,24 @@ namespace TestPerformanceTester
     class Test1 : IPerformanceTest
     {
         public string Description => "Quarter second test";
-        public void Initialize() { }
         public void Run() => Thread.Sleep(250);
     }
 
     class Test2 : IPerformanceTest
     {
         public string Description => "Half second test";
-        public void Initialize() { }
         public void Run() => Thread.Sleep(500);
     }
 
     class Test3 : IPerformanceTest
     {
         public string Description => "Three quarter second test";
-        public void Initialize() { }
         public void Run() => Thread.Sleep(750);
     }
 
     class Test4 : IPerformanceTest
     {
         public string Description => "One second test";
-        public void Initialize() { }
         public void Run() => Thread.Sleep(1000);
     }
 

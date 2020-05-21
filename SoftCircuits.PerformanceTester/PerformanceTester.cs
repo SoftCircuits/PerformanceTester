@@ -32,7 +32,6 @@ namespace SoftCircuits.PerformanceTester
                 IPerformanceTest test = (IPerformanceTest)Activator.CreateInstance(type);
 
                 // Run this test
-                test.Initialize();
                 stopwatch.Restart();
                 test.Run();
                 stopwatch.Stop();

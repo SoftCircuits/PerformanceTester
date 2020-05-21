@@ -23,14 +23,17 @@ namespace SoftCircuits.PerformanceTester
         public int Percent { get; internal set; }
 
         /// <summary>
-        /// Returns a string that shows the relative performance of this result.
-        /// The string will include <paramref name="maxBarLength"/> characters
-        /// with the <paramref name="c"/> character filling up the percent of
-        /// the bar indicated by the <see cref="Percent"/> property.
+        /// Returns a string that shows the performance of this result relative
+        /// to the other results. <paramref name="maxBarLength"/> determines the
+        /// total number of characters in the string. The <see cref="Percent"/>
+        /// property determines the percent of those characters that are the
+        /// character specified by <paramref name="c"/>. The remaining characters
+        /// are spaces.
         /// </summary>
-        /// <param name="maxBarLength">The length of the bar in characters.</param>
-        /// <param name="c">The character to use to</param>
-        /// <returns>A string that shows the relative performance of this result.</returns>
+        /// <param name="maxBarLength">Total length of the string, in characters.</param>
+        /// <param name="c">The character to use to render the bar.</param>
+        /// <returns>A string that shows the performance of this result relative
+        /// to the other results.</returns>
         public string GetRelativePerformanceBar(int maxBarLength, char c = '*')
         {
             int count = (int)(Percent / 100.0 * maxBarLength);

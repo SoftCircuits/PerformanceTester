@@ -13,12 +13,12 @@ namespace SoftCircuits.PerformanceTester
     public class PerformanceTester
     {
         /// <summary>
-        /// Runs all the tests in the specified assembly. Tests are implemented
-        /// as classes that implement the <see cref="IPerformanceTest"/>
-        /// interface.
+        /// Runs all the tests (classes that implement the <see cref="IPerformanceTest"/>
+        /// interface) in the specified assembly.
         /// </summary>
         /// <param name="assembly">The assembly from which to find and run the
         /// tests.</param>
+        /// <returns>Returns all the test results.</returns>
         public IEnumerable<TestResult> Run(Assembly assembly)
         {
             if (assembly == null)
@@ -26,16 +26,18 @@ namespace SoftCircuits.PerformanceTester
 
             Stopwatch stopwatch = new Stopwatch();
             List<TestResult> results = new List<TestResult>();
-
             foreach (Type type in GetAssemblyTests(assembly))
             {
+                // Create an instance of this class
                 IPerformanceTest test = (IPerformanceTest)Activator.CreateInstance(type);
 
+                // Run this test
                 test.Initialize();
                 stopwatch.Restart();
                 test.Run();
                 stopwatch.Stop();
 
+                // Add the result
                 results.Add(new TestResult
                 {
                     Description = test.Description,
@@ -43,10 +45,13 @@ namespace SoftCircuits.PerformanceTester
                 });
             }
 
-            // Calculate percents
-            long max = results.Select(r => r.Milliseconds).DefaultIfEmpty(0).Max();
-            foreach (TestResult result in results)
-                result.Percent = Math.Min((int)((double)result.Milliseconds / max * 100), 100);
+            // Calculate result percents (percent of slowest result)
+            // Avoid divide by zero
+            long maxMilliseconds = results.Select(r => r.Milliseconds).DefaultIfEmpty(0).Max();
+            if (maxMilliseconds == 0)
+                results.ForEach(r => r.Percent = 0);
+            else
+                results.ForEach(r => r.Percent = Math.Min((int)((double)r.Milliseconds / maxMilliseconds * 100), 100));
 
             return results;
         }

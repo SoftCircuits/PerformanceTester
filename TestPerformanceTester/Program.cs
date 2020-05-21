@@ -40,9 +40,6 @@ namespace TestPerformanceTester
 
     class Program
     {
-        // Maximum comparision bar length (in characters)
-        private const int MaxBarLength = 60;
-
         static void Main(string[] args)
         {
             PerformanceTester tester = new PerformanceTester();

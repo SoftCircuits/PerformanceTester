@@ -13,8 +13,8 @@ namespace SoftCircuits.PerformanceTester
 
         /// <summary>
         /// Method that is called before the test to perform any
-        /// initialization.  This time taken by this method is not
-        /// included in the timing of this test.
+        /// initialization. This time taken by this method is not
+        /// included in the test's timing.
         /// </summary>
         void Initialize();
 

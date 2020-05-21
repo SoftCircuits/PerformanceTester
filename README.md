@@ -12,19 +12,13 @@ PerformanceTester is a simple library to help compare the performance of differe
 
 ## Using the Library
 
-To use the library, create each candidate test as a class that implements the `IPerformanceTest` interface. This interface has three members:
+To use the library, create each candidate test as a class that implements the `IPerformanceTest` interface. This interface has two members:
 
 ```cs
 public string Description { get; }
 ```
 
 A read-only property that describes this test.
-
-```cs
-public void Initialize();
-```
-
-A method that is called before the test to perform any initialization. The time taken by this method is not included in the timing of this test.
 
 ```cs
 public void Run();
@@ -40,21 +34,18 @@ For example, the following code defines three simple tests. These tests simply c
 class Test1 : IPerformanceTest
 {
     public string Description => "Quarter second test";
-    public void Initialize() { }
     public void Run() => Thread.Sleep(250);
 }
 
 class Test2 : IPerformanceTest
 {
     public string Description => "Half second test";
-    public void Initialize() { }
     public void Run() => Thread.Sleep(500);
 }
 
 class Test3 : IPerformanceTest
 {
     public string Description => "One second test";
-    public void Initialize() { }
     public void Run() => Thread.Sleep(1000);
 }
 ```

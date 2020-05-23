@@ -5,6 +5,7 @@
 using SoftCircuits.PerformanceTester;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 
@@ -43,7 +44,10 @@ namespace TestPerformanceTester
 
             foreach (TestResult result in results)
             {
-                Console.WriteLine("{0} ({1}ms)", result.Description, result.Milliseconds);
+                Console.WriteLine("{0} ({1}ms/{2}%)",
+                    result.Description,
+                    result.Milliseconds,
+                    result.Percent);
                 Console.WriteLine("[{0}]", result.GetRelativePerformanceBar(60));
                 Console.WriteLine();
             }

@@ -2,6 +2,10 @@
 // Licensed under the MIT license.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace SoftCircuits.PerformanceTester
 {
     public class TestResult
@@ -38,6 +42,29 @@ namespace SoftCircuits.PerformanceTester
         {
             int count = (int)(Percent / 100.0 * maxBarLength);
             return new string(c, count) + new string(' ', maxBarLength - count);
+        }
+
+        /// <summary>
+        /// Sets the <see cref="Percent"/> property of each result to the percent
+        /// relative to the slowest of all the results.
+        /// </summary>
+        /// <param name="results">The collection of <see cref="TestResult"/>s
+        /// to modify.</param>
+        public static void SetResultPercentages(IEnumerable<TestResult> results)
+        {
+            // Calculate result percentages (as a percent of slowest result)
+            long maxMilliseconds = results.Select(r => r.Milliseconds).DefaultIfEmpty(0).Max();
+            // Avoid divide by zero
+            if (maxMilliseconds == 0)
+            {
+                foreach (TestResult result in results)
+                    result.Percent = 0;
+            }
+            else
+            {
+                foreach (TestResult result in results)
+                    result.Percent = Math.Min((int)((double)result.Milliseconds / maxMilliseconds * 100), 100);
+            }
         }
     }
 }

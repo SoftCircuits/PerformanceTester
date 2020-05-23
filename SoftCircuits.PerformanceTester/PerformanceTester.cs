@@ -139,23 +139,11 @@ namespace SoftCircuits.PerformanceTester
         /// <summary>
         /// Prepares the results to run one or more tests.
         /// </summary>
-        private void PrepareTests()
-        {
-            TestResults.Clear();
-        }
+        private void PrepareTests() => TestResults.Clear();
 
         /// <summary>
         /// Finalizes the results after running one or more tests.
         /// </summary>
-        private void ConcludeTests()
-        {
-            // Calculate result percentages (as a percent of slowest result)
-            long maxMilliseconds = TestResults.Select(r => r.Milliseconds).DefaultIfEmpty(0).Max();
-            // Avoid divide by zero
-            if (maxMilliseconds == 0)
-                TestResults.ForEach(r => r.Percent = 0);
-            else
-                TestResults.ForEach(r => r.Percent = Math.Min((int)((double)r.Milliseconds / maxMilliseconds * 100), 100));
-        }
+        private void ConcludeTests() => TestResult.SetResultPercentages(TestResults);
     }
 }

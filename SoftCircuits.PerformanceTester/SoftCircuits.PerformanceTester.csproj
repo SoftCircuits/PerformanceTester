@@ -13,11 +13,11 @@
     <Description>Simple library to help compare the performance of different algorithms. Create your tests by writing classes that implement the IPerformanceTest interface. The library will run all such tests in the specified assembly and provide the results, which include a description of the test, the time in milliseconds and the percent of the time taken as compared to the slowest test. Saves time when comparing the performance of different candidate code blocks.</Description>
     <PackageTags>profile profiling stopwatch timing performance tuning</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Added many overloads to PerformanceTester.Run() to support running tests in difference scenarios; Improvements to XML comments.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added public static TestResult.SetResultPercentages() method.</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/SoftCircuits/PerformanceTester</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SoftCircuits/PerformanceTester</PackageProjectUrl>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>

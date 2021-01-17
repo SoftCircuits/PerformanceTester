@@ -15,6 +15,6 @@ namespace SoftCircuits.PerformanceTester
         /// The method that performs the actual test. This is the
         /// method that will be timed.
         /// </summary>
-        void Run();
+        void Run(object data);
     }
 }

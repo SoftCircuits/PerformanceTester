@@ -22,20 +22,43 @@ namespace SoftCircuits.PerformanceTester
             TestResults = new List<TestResult>();
         }
 
+        #region IPerformanceTest arguments
+
         /// <summary>
         /// Runs the specified test.
         /// </summary>
         /// <param name="test">The test to run.</param>
+        /// <param name="iterations">Number of times to run the test.</param>
+        /// <param name="data">Optional data to pass to the test.</param>
         /// <returns>The test results.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="test"/>
         /// is <c>null</c>.</exception>
-        public IEnumerable<TestResult> Run(IPerformanceTest test)
+        public IEnumerable<TestResult> Run(IPerformanceTest test, int iterations = 1, object data = null)
         {
             if (test == null)
                 throw new ArgumentNullException(nameof(test));
 
             PrepareTests();
-            InternalRun(test);
+            InternalRun(test, iterations, data);
+            ConcludeTests();
+            return TestResults;
+        }
+
+        /// <summary>
+        /// Runs the specified tests.
+        /// </summary>
+        /// <param name="tests">The tests to run.</param>
+        /// <param name="iterations">Number of times to run each test.</param>
+        /// <param name="data">Optional data to pass to each test.</param>
+        /// <returns>The test results.</returns>
+        public IEnumerable<TestResult> Run(IEnumerable<IPerformanceTest> tests, int iterations = 1, object data = null)
+        {
+            if (tests == null)
+                throw new ArgumentNullException(nameof(tests));
+
+            PrepareTests();
+            foreach (IPerformanceTest test in tests)
+                InternalRun(test, iterations, data);
             ConcludeTests();
             return TestResults;
         }
@@ -49,26 +72,49 @@ namespace SoftCircuits.PerformanceTester
         /// is <c>null</c>.</exception>
         public IEnumerable<TestResult> Run(params IPerformanceTest[] tests)
         {
-            if (tests == null)
-                throw new ArgumentNullException(nameof(tests));
-
-            PrepareTests();
-            foreach (IPerformanceTest test in tests)
-                InternalRun(test);
-            ConcludeTests();
-            return TestResults;
+            return Run(tests, 1, null);
         }
+
+        #endregion
+
+        #region Type arguments
 
         /// <summary>
         /// Runs a test of type <typeparamref name="T"/>.
         /// </summary>
         /// <typeparam name="T">The type of test to run.</typeparam>
+        /// <param name="iterations">Number of times to run the test.</param>
+        /// <param name="data">Optional data to pass to the test.</param>
         /// <returns>The test results.</returns>
-        public IEnumerable<TestResult> Run<T>() where T : IPerformanceTest, new()
+        public IEnumerable<TestResult> Run<T>(int iterations = 1, object data = null) where T : IPerformanceTest, new()
         {
-            IPerformanceTest test = Activator.CreateInstance<T>();
+            return Run(Activator.CreateInstance<T>(), iterations, data);
+        }
+
+        /// <summary>
+        /// Runs the specified tests.
+        /// </summary>
+        /// <param name="types">The list of test types to run. Each type must implement
+        /// <see cref="IPerformanceTest"/> or an exception is thrown.</param>
+        /// <returns>The test results.</param>
+        /// <param name="iterations">Number of times to run each test.</param>
+        /// <param name="data">Optional data to pass to each test.</param>
+        /// <returns>The test results.</returns>
+        /// <exception cref="InvalidOperationException">One or more type does not implement
+        /// <see cref="IPerformanceTest"/>.</exception>
+        public IEnumerable<TestResult> Run(IEnumerable<Type> types, int iterations = 1, object data = null)
+        {
+            if (types == null)
+                throw new ArgumentNullException(nameof(types));
+
             PrepareTests();
-            InternalRun(test);
+            foreach (Type type in types)
+            {
+                if (!type.GetInterfaces().Contains(typeof(IPerformanceTest)))
+                    throw new InvalidOperationException($"The test '{type.FullName}' does not implement '{typeof(IPerformanceTest).FullName}'.");
+                IPerformanceTest test = (IPerformanceTest)Activator.CreateInstance(type);
+                InternalRun(test, iterations, data);
+            }
             ConcludeTests();
             return TestResults;
         }
@@ -78,54 +124,62 @@ namespace SoftCircuits.PerformanceTester
         /// </summary>
         /// <param name="types">The list of test types to run. Each type must implement
         /// <see cref="IPerformanceTest"/> or an exception is thrown.</param>
+        /// <param name="iterations">Number of times to run each test.</param>
+        /// <param name="data">Optional data to pass to each test.</param>
         /// <returns>The test results.</returns>
         /// <exception cref="InvalidOperationException">One or more type does not implement
         /// <see cref="IPerformanceTest"/>.</exception>
         public IEnumerable<TestResult> Run(params Type[] types)
         {
-            PrepareTests();
-            foreach (Type type in types)
-            {
-                if (!type.GetInterfaces().Contains(typeof(IPerformanceTest)))
-                    throw new InvalidOperationException($"The test '{type.FullName}' does not implement '{typeof(IPerformanceTest).FullName}'.");
-                IPerformanceTest test = (IPerformanceTest)Activator.CreateInstance(type);
-                InternalRun(test);
-            }
-            ConcludeTests();
-            return TestResults;
+            return Run(types, 1, null);
         }
 
+        #endregion
+
+        #region Assembly arguments
+
         /// <summary>
-        /// Runs a test of each of the types found in <paramref name="assembly"/> that
+        /// Runs a test for each type found in <paramref name="assembly"/> that
         /// implement <see cref="IPerformanceTest"/>.
         /// </summary>
         /// <param name="assembly">The assembly from which to find and run
         /// tests.</param>
+        /// <param name="iterations">Number of times to run each test.</param>
+        /// <param name="data">Optional data to pass to each test.</param>
         /// <returns>The test results.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="assembly"/> is
         /// <c>null</c>.</exception>
-        public IEnumerable<TestResult> Run(Assembly assembly)
+        public IEnumerable<TestResult> Run(Assembly assembly, int iterations = 1, object data = null)
         {
             if (assembly == null)
                 throw new ArgumentNullException(nameof(assembly));
 
             return Run(assembly
                 .GetTypes()
-                .Where(type => type.GetInterfaces().Contains(typeof(IPerformanceTest)))
-                .ToArray());
+                .Where(type => type.GetInterfaces().Contains(typeof(IPerformanceTest))),
+                iterations,
+                data);
         }
+
+        #endregion
 
         /// <summary>
         /// Internal method that runs a single test.
         /// </summary>
         /// <param name="test">The test to run.</param>
-        private void InternalRun(IPerformanceTest test)
+        /// <param name="iterations">Number of times to run the test.</param>
+        /// <param name="data">Data to pass to the test.</param>
+        private void InternalRun(IPerformanceTest test, int iterations, object data)
         {
             Stopwatch stopwatch = new Stopwatch();
 
+            // Keep iterations positive
+            iterations = Math.Max(iterations, 1);
+
             // Run this test
             stopwatch.Start();
-            test.Run();
+            for (int i = 0; i < iterations; i++)
+                test.Run(data);
             stopwatch.Stop();
 
             // Add the result

@@ -61,7 +61,7 @@ Most of the `Run()` overloads include an optional `iterations` and `data` argume
 
 The `iterations` argument specifies how many times to run each test. This can be handy when the test is too quick to measure, or if the test execution time can vary and you want to compare the average time to perform each test.
 
-The `data` argument is simply an argument that gets pass to each test. You might using for sending test data, for example. Because this argument is of type `object`, it can refer to any value type.
+The `data` argument is simply an argument that gets pass to each test. You might using for sending test data, for example. Because this argument is of type `object`, it can pass any type of data.
 
 ## Displaying Test Results
 

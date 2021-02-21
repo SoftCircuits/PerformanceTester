@@ -12,7 +12,7 @@ PerformanceTester is a simple library to help compare the performance of differe
 
 ## Creating Tests
 
-You create a test by creating a class that implements `IPerformanceTest`. This interface has two members:
+You create a test by creating a class that implements `IPerformanceTest`. This interface has three members:
 
 ```cs
 public string Description { get; }
@@ -21,7 +21,13 @@ public string Description { get; }
 `Description` is a read-only property that describes this test.
 
 ```cs
-public void Run(object data);
+public void Initialize(object? data);
+```
+
+`Initialize` is a method to perform any initialization for the test. The time taken by this method is not included in the results. The `data` argument can optionally be used to pass data to the test.
+
+```cs
+public void Run(object? data);
 ```
 
 `Run` is the method that performs the actual test. This is the method that will be timed. The `data` argument can optionally be used to pass data to the test.
@@ -32,19 +38,22 @@ The following code defines three simple tests. These tests simply call `Thread.S
 class Test1 : IPerformanceTest
 {
     public string Description => "Quarter second test";
-    public void Run(object data) => Thread.Sleep(250);
+    public void Initialize(object? data) { }
+    public void Run(object? data) => Thread.Sleep(250);
 }
 
 class Test2 : IPerformanceTest
 {
     public string Description => "Half second test";
-    public void Run(object data) => Thread.Sleep(500);
+    public void Initialize(object? data) { }
+    public void Run(object? data) => Thread.Sleep(500);
 }
 
 class Test3 : IPerformanceTest
 {
     public string Description => "One second test";
-    public void Run(object data) => Thread.Sleep(1000);
+    public void Initialize(object? data) { }
+    public void Run(object? data) => Thread.Sleep(1000);
 }
 ```
 
@@ -59,9 +68,9 @@ IEnumerable<TestResult> results = tester.Run(Assembly.GetExecutingAssembly());
 
 Most of the `Run()` overloads include an optional `iterations` and `data` argument.
 
-The `iterations` argument specifies how many times to run each test. This can be handy when the test is too quick to measure, or if the test execution time can vary and you want to compare the average time to perform each test.
+The `iterations` argument specifies how many times to run each test. This can be handy when the test is too quick to measure, or if the test execution time can vary and you want to compare the average time to perform each test. When running more than one iteration, you can set the `PerformanceTester.AverateResults` property to `true`. In this case, the results will show the average time rather than the total time.
 
-The `data` argument is simply an argument that gets pass to each test. You might using for sending test data, for example. Because this argument is of type `object`, it can refer to any value type.
+The `data` argument is simply an argument that gets pass to each test. You might using for sending test data, for example. Because this argument is of type `object`, it can pass any type of data.
 
 ## Displaying Test Results
 

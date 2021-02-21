@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2020-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -13,50 +13,29 @@ namespace TestPerformanceTester
     class Test1 : IPerformanceTest
     {
         public string Description => "Quarter second test";
-        public void Run(object data) => Thread.Sleep(250);
+        public void Initialize(object? data) { }
+        public void Run(object? data) => Thread.Sleep(250);
     }
 
     class Test2 : IPerformanceTest
     {
         public string Description => "Half second test";
-        public void Run(object data) => Thread.Sleep(500);
+        public void Initialize(object? data) { }
+        public void Run(object? data) => Thread.Sleep(500);
     }
 
     class Test3 : IPerformanceTest
     {
         public string Description => "Three quarter second test";
-        public void Run(object data) => Thread.Sleep(750);
+        public void Initialize(object? data) { }
+        public void Run(object? data) => Thread.Sleep(750);
     }
 
     class Test4 : IPerformanceTest
     {
         public string Description => "One second test";
-        public void Run(object data) => Thread.Sleep(1000);
-    }
-
-    class IterationTest : IPerformanceTest
-    {
-        private int Counter = 0;
-
-        public string Description => $"Iteration Test (Counter = {Counter})";
-
-        public void Run(object data)
-        {
-            Counter++;
-            Thread.Sleep(100);
-        }
-    }
-
-    class DataTest : IPerformanceTest
-    {
-        private object Data = null;
-        public string Description => $"Data Test (Data = {Data?.ToString() ?? "NULL"})";
-
-        public void Run(object data)
-        {
-            Data = data;
-            Thread.Sleep(100);
-        }
+        public void Initialize(object? data) { }
+        public void Run(object? data) => Thread.Sleep(1000);
     }
 
     class Program
@@ -64,8 +43,21 @@ namespace TestPerformanceTester
         static void Main(string[] args)
         {
             PerformanceTester tester = new PerformanceTester();
-            IEnumerable<TestResult> results = tester.Run(Assembly.GetExecutingAssembly());
 
+            Console.WriteLine("Standard Tests");
+            ShowResults(tester.Run(Assembly.GetExecutingAssembly()));
+
+            Console.WriteLine("Multiple Iteration Tests");
+            ShowResults(tester.Run(Assembly.GetExecutingAssembly(), 5));
+
+            Console.WriteLine("Multiple Iteration Tests with Averaged Results");
+            tester.AverageResults = true;
+            ShowResults(tester.Run(Assembly.GetExecutingAssembly(), 5));
+        }
+
+        // Display results
+        static void ShowResults(IEnumerable<TestResult> results)
+        {
             foreach (TestResult result in results)
             {
                 Console.WriteLine("{0} ({1}ms/{2}%)",
@@ -76,13 +68,6 @@ namespace TestPerformanceTester
                 Console.WriteLine();
             }
             Console.WriteLine();
-
-            IPerformanceTest test = new IterationTest();
-            tester.Run(test, 5);
-            Console.WriteLine(test.Description);
-            test = new DataTest();
-            tester.Run(test, 1, "Sample Data!");
-            Console.WriteLine(test.Description);
         }
     }
 }

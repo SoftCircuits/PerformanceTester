@@ -1,7 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>net5.0;netstandard2.0</TargetFrameworks>
+    <Nullable>annotations</Nullable>
+    <Nullable Condition="'$(TargetFramework)' == 'net5.0'">enable</Nullable>
+    <LangVersion>9.0</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Authors>Jonathan Wood</Authors>
@@ -9,15 +12,17 @@
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageIcon>Logo_64x64.png</PackageIcon>
     <Product>PerformanceTester</Product>
-    <Copyright>Copyright © 2020 SoftCircuits</Copyright>
-    <Description>Simple library to help compare the performance of different algorithms. Create your tests by writing classes that implement the IPerformanceTest interface. The library will run all such tests in the specified assembly and provide the results, which include a description of the test, the time in milliseconds and the percent of the time taken as compared to the slowest test. Saves time when comparing the performance of different candidate code blocks.</Description>
+    <Copyright>Copyright © 2020-2021 SoftCircuits</Copyright>
+    <Description>Simple library to help compare the performance of different algorithms. Create your tests by writing classes that implement the IPerformanceTest interface. The library will run all such tests in the specified assembly and provide the results, which include a description of the test, the time in milliseconds and the percent of the time taken as compared to the slowest test. Saves time when comparing the performance of different candidate code blocks.
+
+Now targets either .NET Standard 2.0 or .NET 5.0 and supports nullable reference types.</Description>
     <PackageTags>profile profiling stopwatch timing performance tuning</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Now has the ability to specify the number of iterations each test should be run; Now has the option to pass data to each test; BREAKING CHANGES: The IPerformanceTest.Run() method now accepts a "object data" argument.</PackageReleaseNotes>
+    <PackageReleaseNotes>Now targets either .NET Standard 2.0 or .NET 5.0 and supports nullable reference types; When running multiple iterations, results can now show average time rather than total time; BREAKING CHANGE: IPerformanceTest interface now includes Initialize() method.</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/SoftCircuits/PerformanceTester</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SoftCircuits/PerformanceTester</PackageProjectUrl>
-    <Version>2.0.0</Version>
+    <Version>3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

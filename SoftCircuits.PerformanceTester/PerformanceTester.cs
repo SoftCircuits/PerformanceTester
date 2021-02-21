@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2020-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -15,11 +15,20 @@ namespace SoftCircuits.PerformanceTester
         private readonly List<TestResult> TestResults;
 
         /// <summary>
+        /// If true and the test runs multiple iterations,
+        /// the test results will show the average time rather than the total time.
+        /// </summary>
+        public bool AverageResults { get; set; }
+
+        /// <summary>
         /// Constructs a new <see cref="PerformanceTester"/> instance.
         /// </summary>
-        public PerformanceTester()
+        /// <param name="averageResults">If true and the test runs multiple iterations,
+        /// the test results will show the average time rather than the total time.</param>
+        public PerformanceTester(bool averageResults = false)
         {
             TestResults = new List<TestResult>();
+            AverageResults = averageResults;
         }
 
         #region IPerformanceTest arguments
@@ -33,14 +42,14 @@ namespace SoftCircuits.PerformanceTester
         /// <returns>The test results.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="test"/>
         /// is <c>null</c>.</exception>
-        public IEnumerable<TestResult> Run(IPerformanceTest test, int iterations = 1, object data = null)
+        public IEnumerable<TestResult> Run(IPerformanceTest test, int iterations = 1, object? data = null)
         {
             if (test == null)
                 throw new ArgumentNullException(nameof(test));
 
             PrepareTests();
             InternalRun(test, iterations, data);
-            ConcludeTests();
+            ConcludeTests(iterations);
             return TestResults;
         }
 
@@ -51,7 +60,7 @@ namespace SoftCircuits.PerformanceTester
         /// <param name="iterations">Number of times to run each test.</param>
         /// <param name="data">Optional data to pass to each test.</param>
         /// <returns>The test results.</returns>
-        public IEnumerable<TestResult> Run(IEnumerable<IPerformanceTest> tests, int iterations = 1, object data = null)
+        public IEnumerable<TestResult> Run(IEnumerable<IPerformanceTest> tests, int iterations = 1, object? data = null)
         {
             if (tests == null)
                 throw new ArgumentNullException(nameof(tests));
@@ -59,7 +68,7 @@ namespace SoftCircuits.PerformanceTester
             PrepareTests();
             foreach (IPerformanceTest test in tests)
                 InternalRun(test, iterations, data);
-            ConcludeTests();
+            ConcludeTests(iterations);
             return TestResults;
         }
 
@@ -86,7 +95,7 @@ namespace SoftCircuits.PerformanceTester
         /// <param name="iterations">Number of times to run the test.</param>
         /// <param name="data">Optional data to pass to the test.</param>
         /// <returns>The test results.</returns>
-        public IEnumerable<TestResult> Run<T>(int iterations = 1, object data = null) where T : IPerformanceTest, new()
+        public IEnumerable<TestResult> Run<T>(int iterations = 1, object? data = null) where T : IPerformanceTest, new()
         {
             return Run(Activator.CreateInstance<T>(), iterations, data);
         }
@@ -102,7 +111,7 @@ namespace SoftCircuits.PerformanceTester
         /// <returns>The test results.</returns>
         /// <exception cref="InvalidOperationException">One or more type does not implement
         /// <see cref="IPerformanceTest"/>.</exception>
-        public IEnumerable<TestResult> Run(IEnumerable<Type> types, int iterations = 1, object data = null)
+        public IEnumerable<TestResult> Run(IEnumerable<Type> types, int iterations = 1, object? data = null)
         {
             if (types == null)
                 throw new ArgumentNullException(nameof(types));
@@ -112,10 +121,12 @@ namespace SoftCircuits.PerformanceTester
             {
                 if (!type.GetInterfaces().Contains(typeof(IPerformanceTest)))
                     throw new InvalidOperationException($"The test '{type.FullName}' does not implement '{typeof(IPerformanceTest).FullName}'.");
-                IPerformanceTest test = (IPerformanceTest)Activator.CreateInstance(type);
-                InternalRun(test, iterations, data);
+                if (Activator.CreateInstance(type) is IPerformanceTest test)
+                    InternalRun(test, iterations, data);
+                else
+                    throw new InvalidOperationException($"Unable to create instance of {type.FullName}.");
             }
-            ConcludeTests();
+            ConcludeTests(iterations);
             return TestResults;
         }
 
@@ -149,7 +160,7 @@ namespace SoftCircuits.PerformanceTester
         /// <returns>The test results.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="assembly"/> is
         /// <c>null</c>.</exception>
-        public IEnumerable<TestResult> Run(Assembly assembly, int iterations = 1, object data = null)
+        public IEnumerable<TestResult> Run(Assembly assembly, int iterations = 1, object? data = null)
         {
             if (assembly == null)
                 throw new ArgumentNullException(nameof(assembly));
@@ -169,7 +180,7 @@ namespace SoftCircuits.PerformanceTester
         /// <param name="test">The test to run.</param>
         /// <param name="iterations">Number of times to run the test.</param>
         /// <param name="data">Data to pass to the test.</param>
-        private void InternalRun(IPerformanceTest test, int iterations, object data)
+        private void InternalRun(IPerformanceTest test, int iterations, object? data)
         {
             Stopwatch stopwatch = new Stopwatch();
 
@@ -198,6 +209,6 @@ namespace SoftCircuits.PerformanceTester
         /// <summary>
         /// Finalizes the results after running one or more tests.
         /// </summary>
-        private void ConcludeTests() => TestResult.SetResultPercentages(TestResults);
+        private void ConcludeTests(int iterations/* = 1*/) => TestResult.SetResultPercentages(TestResults, iterations, AverageResults);
     }
 }

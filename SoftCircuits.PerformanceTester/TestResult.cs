@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2020 Jonathan Wood (www.softcircuits.com)
+﻿// Copyright (c) 2020-2021 Jonathan Wood (www.softcircuits.com)
 // Licensed under the MIT license.
 //
 
@@ -27,6 +27,14 @@ namespace SoftCircuits.PerformanceTester
         public int Percent { get; internal set; }
 
         /// <summary>
+        /// Constructs a <see cref="TestResult"/> instance.
+        /// </summary>
+        public TestResult()
+        {
+            Description = string.Empty;
+        }
+
+        /// <summary>
         /// Returns a string that shows the performance of this result relative
         /// to the other results. <paramref name="maxBarLength"/> determines the
         /// total number of characters in the string. The <see cref="Percent"/>
@@ -50,7 +58,9 @@ namespace SoftCircuits.PerformanceTester
         /// </summary>
         /// <param name="results">The collection of <see cref="TestResult"/>s
         /// to modify.</param>
-        public static void SetResultPercentages(IEnumerable<TestResult> results)
+        /// <param name="iterations"></param>
+        /// <param name="averageResults"></param>
+        public static void SetResultPercentages(IEnumerable<TestResult> results, int iterations = 1, bool averageResults = false)
         {
             // Calculate result percentages (as a percent of slowest result)
             long maxMilliseconds = results.Select(r => r.Milliseconds).DefaultIfEmpty(0).Max();
@@ -59,6 +69,16 @@ namespace SoftCircuits.PerformanceTester
             {
                 foreach (TestResult result in results)
                     result.Percent = 0;
+            }
+            else if (iterations > 1 && averageResults)
+            {
+                double averageMaxMilliseconds = maxMilliseconds / iterations;
+                foreach (TestResult result in results)
+                {
+                    double averageMilliseconds = (double)result.Milliseconds / iterations;
+                    result.Milliseconds = Convert.ToInt64(averageMilliseconds);
+                    result.Percent = Math.Min((int)(averageMilliseconds / averageMaxMilliseconds * 100), 100);
+                }
             }
             else
             {

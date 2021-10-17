@@ -18,11 +18,11 @@
 Now targets either .NET Standard 2.0 or .NET 5.0 and supports nullable reference types.</Description>
     <PackageTags>profile profiling stopwatch timing performance tuning</PackageTags>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <PackageReleaseNotes>Now targets either .NET Standard 2.0 or .NET 5.0 and supports nullable reference types; When running multiple iterations, results can now show average time rather than total time; BREAKING CHANGE: IPerformanceTest interface now includes Initialize() method.</PackageReleaseNotes>
+    <PackageReleaseNotes>Code did not correctly call Initialize() method of test classes. This has been corrected; No longer including iteration loop in time results.</PackageReleaseNotes>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/SoftCircuits/PerformanceTester</RepositoryUrl>
     <PackageProjectUrl>https://github.com/SoftCircuits/PerformanceTester</PackageProjectUrl>
-    <Version>3.0.0</Version>
+    <Version>3.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

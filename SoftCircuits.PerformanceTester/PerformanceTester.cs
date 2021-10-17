@@ -182,16 +182,21 @@ namespace SoftCircuits.PerformanceTester
         /// <param name="data">Data to pass to the test.</param>
         private void InternalRun(IPerformanceTest test, int iterations, object? data)
         {
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new();
+
+            // Allow test class to initialize iteself
+            test.Initialize(data);
 
             // Keep iterations positive
             iterations = Math.Max(iterations, 1);
 
             // Run this test
-            stopwatch.Start();
             for (int i = 0; i < iterations; i++)
+            {
+                stopwatch.Start();
                 test.Run(data);
-            stopwatch.Stop();
+                stopwatch.Stop();
+            }
 
             // Add the result
             TestResults.Add(new TestResult
